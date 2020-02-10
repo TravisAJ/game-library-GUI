@@ -14,8 +14,8 @@ BUTTON_FONT = ("Arial", 15)
 class MainMenu(tk.Frame):
     def __init__(self):
         tk.Frame.__init__(self)
-        lbl.title = tk.Label(text = "Game Library", font = TITLE_FONT)
-        lbl.title.grid(row = 0, column = 0, sticky = "news")
+        lbl_title = tk.Label(text = "Game Library", font = TITLE_FONT)
+        lbl_title.grid(row = 0, column = 0, sticky = "news")
 
 if __name__ == "__main__":
     games = {}
@@ -25,5 +25,7 @@ if __name__ == "__main__":
     root = tk.Tk()
     root.title("The Game Library")
     root.geometry("500x500")
+    main_menu = MainMenu()
+    main_menu.grid(row = 0, column = 0, sticky = "news")
     
     root.mainloop()
