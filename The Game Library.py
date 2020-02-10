@@ -16,6 +16,21 @@ class MainMenu(tk.Frame):
         tk.Frame.__init__(self)
         lbl_title = tk.Label(text = "Game Library", font = TITLE_FONT)
         lbl_title.grid(row = 0, column = 0, sticky = "news")
+        
+        btn_add = tk.Button(text = "ADD", font = BUTTON_FONT)
+        btn_add.grid(row = 1, column = 0)
+        
+        btn_add = tk.Button(text = "EDIT", font = BUTTON_FONT)
+        btn_add.grid(row = 2, column = 0)
+        
+        btn_add = tk.Button(text = "SEARCH", font = BUTTON_FONT)
+        btn_add.grid(row = 3, column = 0)
+        
+        btn_add = tk.Button(text = "REMOVE", font = BUTTON_FONT)
+        btn_add.grid(row = 4, column = 0)
+        
+        btn_add = tk.Button(text = "SAVE", font = BUTTON_FONT)
+        btn_add.grid(row = 5, column = 0)        
 
 if __name__ == "__main__":
     games = {}
