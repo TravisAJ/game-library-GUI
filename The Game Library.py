@@ -99,7 +99,28 @@ class AddMenu(tk.Frame):
         self.chk_progress.grid(row = 4, column = 2, sticky = "nsw")
         
         self.lbl_gamemode = tk.Label(self, text = "Gamemode:", font = LABEL_FONT)
-        self.lbl_gamemode.grid(row = 4, column = 3, sticky = "news")        
+        self.lbl_gamemode.grid(row = 4, column = 3, sticky = "news")
+        
+        self.rad_single = tk.Radiobutton(self, text = "Single", fg = "gray", font = ENTRY_FONT)
+        self.rad_single.grid(row = 4, column = 4, sticky = "news")
+        
+        self.rad_multi = tk.Radiobutton(self, text = "Multi", fg = "gray", font = ENTRY_FONT)
+        self.rad_multi.grid(row = 4, column = 5, sticky = "news")
+        
+        self.rad_either = tk.Radiobutton(self, text = "Either", fg = "gray", font = ENTRY_FONT)
+        self.rad_either.grid(row = 4, column = 6, sticky = "news")
+        
+        self.scr_notes = ScrolledText(self, width = 110, height = 5, font = SCROLL_FONT)
+        self.scr_notes.grid(row = 5, column = 1, columnspan = 6)
+        
+        self.btn_cancel = tk.Button(self, text = "CANCEL", font = BUTTON_FONT)
+        self.btn_cancel.grid(row = 6, column = 1, columnspan = 2, sticky = "news")
+        
+        self.btn_reset = tk.Button(self, text = "RESET", font = BUTTON_FONT)
+        self.btn_reset.grid(row = 6, column = 3, columnspan = 2, sticky = "news")
+        
+        self.btn_confirm = tk.Button(self, text = "CONFIRM", font = BUTTON_FONT)
+        self.btn_confirm.grid(row = 6, column = 5, columnspan = 2, sticky = "news")        
         
 class SearchMenu(tk.Frame):
     def __init__(self):
