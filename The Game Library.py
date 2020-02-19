@@ -18,6 +18,8 @@ class Screen(tk.Frame):
     current = 0
     def __init__(self):
         tk.Frame.__init__(self)
+    def switch_frame():
+        screens[Screen.current].tkraise()
 
 class MainMenu(Screen):
     def __init__(self):
@@ -29,20 +31,42 @@ class MainMenu(Screen):
         self.lbl_main = tk.Label(self, text = "The Game Library", font = TITLE_FONT)
         self.lbl_main.grid(row = 1, column = 1, columnspan=3, sticky = "news")
         
-        self.btn_add = tk.Button(self, text = "ADD", font = BUTTON_FONT)
+        self.btn_add = tk.Button(self, text = "ADD", font = BUTTON_FONT, command = self.go_add)
         self.btn_add.grid(row = 2, column = 2, sticky = "news")
         
-        self.btn_edit = tk.Button(self, text = "EDIT", font = BUTTON_FONT)
+        self.btn_edit = tk.Button(self, text = "EDIT", font = BUTTON_FONT, command = self.go_edit)
         self.btn_edit.grid(row = 3, column = 2, sticky = "nwes")
         
-        self.btn_search = tk.Button(self, text = "SEARCH", font = BUTTON_FONT)
+        self.btn_search = tk.Button(self, text = "SEARCH", font = BUTTON_FONT, command = self.go_search)
         self.btn_search.grid(row = 4, column = 2, sticky = "nwes")
         
-        self.btn_remove = tk.Button(self, text = "REMOVE", font = BUTTON_FONT)
+        self.btn_remove = tk.Button(self, text = "REMOVE", font = BUTTON_FONT, command = self.go_remove)
         self.btn_remove.grid(row = 5, column = 2, sticky = "news")
         
-        self.btn_save = tk.Button(self, text = "SAVE", font = BUTTON_FONT)
+        self.btn_save = tk.Button(self, text = "SAVE", font = BUTTON_FONT, command = self.go_save)
         self.btn_save.grid(row = 6, column = 2, sticky = "news")
+    
+    def go_add(self):
+        Screen.current = 1
+        Screen.switch_frame()
+        
+    def go_edit(self):
+        popup = tk.Tk()
+        popup.title("Edit")
+        frm_edit_list = EditMenu(popup)
+        frm_edit_list.grid(row = 0, column = 0, sticky = "news")
+        
+    def go_search(self):
+        Screen.current = 3
+        Screen.switch_frame()
+        
+    def go_remove(self):
+        Screen.current = 4
+        Screen.switch_frame()
+        
+    def go_save(self):
+        Screen.current = 5
+        Screen.switch_frame()        
         
 class AddMenu(Screen):
     def __init__(self):
@@ -123,18 +147,30 @@ class AddMenu(Screen):
         self.scr_notes = ScrolledText(self, width = 110, height = 5, font = SCROLL_FONT)
         self.scr_notes.grid(row = 5, column = 1, columnspan = 6)
         
-        self.btn_cancel_add = tk.Button(self, text = "CANCEL", font = BUTTON_FONT)
+        self.btn_cancel_add = tk.Button(self, text = "CANCEL", font = BUTTON_FONT, command = self.cancel_add)
         self.btn_cancel_add.grid(row = 6, column = 1, columnspan = 2, sticky = "news")
         
-        self.btn_reset = tk.Button(self, text = "RESET", font = BUTTON_FONT)
+        self.btn_reset = tk.Button(self, text = "RESET", font = BUTTON_FONT, command = self.reset)
         self.btn_reset.grid(row = 6, column = 3, columnspan = 2, sticky = "news")
         
-        self.btn_add = tk.Button(self, text = "ADD", font = BUTTON_FONT)
+        self.btn_add = tk.Button(self, text = "ADD", font = BUTTON_FONT, command = self.submit_add)
         self.btn_add.grid(row = 6, column = 5, columnspan = 2, sticky = "news")
         
-class EditMenu(Screen):
-    def __init__(self):
-        Screen.__init__(self)
+    def cancel_add(self):
+        Screen.current = 0
+        Screen.switch_frame()
+        
+    def reset(self):
+        print("Resetting...")
+        
+    def submit_add(self):
+        Screen.current = 0
+        Screen.switch_frame()
+        print("Game Added.")
+        
+class EditMenu(tk.Frame):
+    def __init__(self, parent):
+        tk.Frame.__init__(self, master = parent)
         self.grid_columnconfigure(1,weight=1)
         self.grid_columnconfigure(2,weight=1)
         self.grid_columnconfigure(3,weight=1)
@@ -151,11 +187,19 @@ class EditMenu(Screen):
         self.dbx_edit = tk.OptionMenu(self, tkvar, * options)
         self.dbx_edit.grid(row = 3, column = 1, columnspan = 4, sticky = "news")
         
-        self.btn_cancel_edit = tk.Button(self, text = "CANCEL", font = BUTTON_FONT)
+        self.btn_cancel_edit = tk.Button(self, text = "CANCEL", font = BUTTON_FONT, command = self.cancel_edit)
         self.btn_cancel_edit.grid(row = 4, column = 1, columnspan = 2, sticky = "news")
         
-        self.btn_edit = tk.Button(self, text = "EDIT", font = BUTTON_FONT)
+        self.btn_edit = tk.Button(self, text = "EDIT", font = BUTTON_FONT, command = self.submit_edit)
         self.btn_edit.grid(row = 4, column = 3, columnspan = 2, sticky = "news")
+        
+    def cancel_edit(self):
+        Screen.current = 0
+        Screen.switch_frame()
+        
+    def submit_edit(self):
+        Screen.current = 1
+        Screen.switch_frame()
         
 class SearchMenu(Screen):
     def __init__(self):
@@ -195,14 +239,26 @@ class SearchMenu(Screen):
         self.scr_search = ScrolledText(self, width = 110, height = 5, font = SCROLL_FONT)
         self.scr_search.grid(row = 6, column = 1, columnspan = 6)
         
-        self.btn_back = tk.Button(self, text = "BACK", font = BUTTON_FONT)
+        self.btn_back = tk.Button(self, text = "BACK", font = BUTTON_FONT, command = self.cancel_search)
         self.btn_back.grid(row = 7, column = 1, columnspan = 2, sticky = "news")
         
-        self.btn_clear = tk.Button(self, text = "CLEAR", font = BUTTON_FONT)
+        self.btn_clear = tk.Button(self, text = "CLEAR", font = BUTTON_FONT, command = self.clear)
         self.btn_clear.grid(row = 7, column = 3, columnspan = 2, sticky = "news")
         
-        self.btn_submit = tk.Button(self, text = "SUBMIT", font = BUTTON_FONT)
-        self.btn_submit.grid(row = 7, column = 5, columnspan = 2, sticky = "news")        
+        self.btn_submit = tk.Button(self, text = "SUBMIT", font = BUTTON_FONT, command = self.submit_search)
+        self.btn_submit.grid(row = 7, column = 5, columnspan = 2, sticky = "news")
+        
+    def cancel_search(self):
+        Screen.current = 0
+        Screen.switch_frame()
+        
+    def clear(self):
+        print("Clearing...")
+        
+    def submit_search(self):
+        Screen.current = 0
+        Screen.switch_frame()
+        print("Searching Game...")        
         
 class PrintFilters(tk.Frame):
     def __init__(self, parent):
@@ -266,11 +322,20 @@ class RemoveMenu(Screen):
         self.dbx_edit = tk.OptionMenu(self, tkvar, * options)
         self.dbx_edit.grid(row = 3, column = 1, columnspan = 4, sticky = "news")
         
-        self.btn_cancel_remove = tk.Button(self, text = "CANCEL", font = BUTTON_FONT)
+        self.btn_cancel_remove = tk.Button(self, text = "CANCEL", font = BUTTON_FONT, command = self.cancel_remove)
         self.btn_cancel_remove.grid(row = 4, column = 1, columnspan = 2, sticky = "news")
         
-        self.btn_remove = tk.Button(self, text = "REMOVE", font = BUTTON_FONT)
+        self.btn_remove = tk.Button(self, text = "REMOVE", font = BUTTON_FONT, command = self.submit_remove)
         self.btn_remove.grid(row = 4, column = 3, columnspan = 2, sticky = "news")
+        
+    def cancel_remove(self):
+        Screen.current = 0
+        Screen.switch_frame()
+        
+    def submit_remove(self):
+        Screen.current = 0
+        Screen.switch_frame()
+        print("Game Removed.")    
         
 class SaveMenu(Screen):
     def __init__(self):
@@ -282,8 +347,12 @@ class SaveMenu(Screen):
         self.lbl_save = tk.Label(self, text = "File saved.", font = TITLE_FONT)
         self.lbl_save.grid(row = 1, column = 1, columnspan = 3)
         
-        self.btn_save = tk.Button(self, text = "OK", font = BUTTON_FONT)
-        self.btn_save.grid(row = 2, column = 1, columnspan = 3)        
+        self.btn_save = tk.Button(self, text = "OK", font = BUTTON_FONT, command = self.ok)
+        self.btn_save.grid(row = 2, column = 1, columnspan = 3)
+        
+    def ok(self):
+        Screen.current = 0
+        Screen.switch_frame()            
 
 if __name__ == "__main__":
     games = {}
@@ -296,12 +365,11 @@ if __name__ == "__main__":
     screens = [MainMenu(), AddMenu(), EditMenu(),
                SearchMenu(), RemoveMenu(), SaveMenu()]  
     
-    screens[0].grid(row = 0, column = 0, sticky = "nesw")
-    screens[1].grid(row = 0, column = 0, sticky = "nesw")
-    screens[2].grid(row = 0, column = 0, sticky = "nesw")
-    screens[3].grid(row = 0, column = 0, sticky = "nesw")
-    screens[4].grid(row = 0, column = 0, sticky = "nesw")
-    screens[5].grid(row = 0, column = 0, sticky = "nesw")
+    screens[0].grid(row = 0, column = 0, sticky = "news")
+    screens[1].grid(row = 0, column = 0, sticky = "news")
+    screens[3].grid(row = 0, column = 0, sticky = "news")
+    screens[4].grid(row = 0, column = 0, sticky = "news")
+    screens[5].grid(row = 0, column = 0, sticky = "news")
 
     '''Temporary for ALPHA testing'''
     keep_going = True
