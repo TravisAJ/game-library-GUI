@@ -40,10 +40,10 @@ class MainMenu(Screen):
         self.btn_search = tk.Button(self, text = "SEARCH", font = BUTTON_FONT, command = self.go_search)
         self.btn_search.grid(row = 4, column = 2, sticky = "nwes")
         
-        self.btn_remove = tk.Button(self, text = "REMOVE", font = BUTTON_FONT, command = self.go_remove)
+        self.btn_remove = tk.Button(self, text = "REMOVE", font = BUTTON_FONT)
         self.btn_remove.grid(row = 5, column = 2, sticky = "news")
         
-        self.btn_save = tk.Button(self, text = "SAVE", font = BUTTON_FONT, command = self.go_save)
+        self.btn_save = tk.Button(self, text = "SAVE", font = BUTTON_FONT)
         self.btn_save.grid(row = 6, column = 2, sticky = "news")
     
     def go_add(self):
@@ -52,21 +52,13 @@ class MainMenu(Screen):
         
     def go_edit(self):
         popup = tk.Tk()
-        popup.title("Edit")
-        frm_edit_list = EditMenu(popup)
-        frm_edit_list.grid(row = 0, column = 0, sticky = "news")
+        popup.title("Edit Menu")
+        frm_edit = EditMenu(popup)
+        frm_edit.grid(row = 0, column = 0)
         
     def go_search(self):
-        Screen.current = 3
+        Screen.current = 2
         Screen.switch_frame()
-        
-    def go_remove(self):
-        Screen.current = 4
-        Screen.switch_frame()
-        
-    def go_save(self):
-        Screen.current = 5
-        Screen.switch_frame()        
         
 class AddMenu(Screen):
     def __init__(self):
@@ -171,6 +163,7 @@ class AddMenu(Screen):
 class EditMenu(tk.Frame):
     def __init__(self, parent):
         tk.Frame.__init__(self, master = parent)
+        self.parent = parent
         self.grid_columnconfigure(1,weight=1)
         self.grid_columnconfigure(2,weight=1)
         self.grid_columnconfigure(3,weight=1)
@@ -362,14 +355,11 @@ if __name__ == "__main__":
     root = tk.Tk()
     root.title("The Game Library")
     
-    screens = [MainMenu(), AddMenu(), EditMenu(),
-               SearchMenu(), RemoveMenu(), SaveMenu()]  
+    screens = [MainMenu(), AddMenu(), SearchMenu()]  
     
     screens[0].grid(row = 0, column = 0, sticky = "news")
     screens[1].grid(row = 0, column = 0, sticky = "news")
-    screens[3].grid(row = 0, column = 0, sticky = "news")
-    screens[4].grid(row = 0, column = 0, sticky = "news")
-    screens[5].grid(row = 0, column = 0, sticky = "news")
+    screens[2].grid(row = 0, column = 0, sticky = "news")
 
     '''Temporary for ALPHA testing'''
     keep_going = True
@@ -379,10 +369,7 @@ if __name__ == "__main__":
         --------------------------------
         1) Main Menu
         2) Add Menu
-        3) Edit Menu
-        4) Search Menu
-        5) Remove Menu
-        6) Save Menu
+        3) Search Menu
         """)
         
         selection = input("Pick a screen. ")
@@ -394,15 +381,6 @@ if __name__ == "__main__":
             keep_going = False
         elif selection == "3":
             frame = screens[2]
-            keep_going = False
-        elif selection == "4":
-            frame = screens[3]
-            keep_going = False
-        elif selection == "5":
-            frame = screens[4]
-            keep_going = False
-        elif selection == "6":
-            frame = screens[5]
             keep_going = False
         else:
             print("***INVALID INPUT***")
