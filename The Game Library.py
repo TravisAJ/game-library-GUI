@@ -69,10 +69,10 @@ class MainMenu(Screen):
         frm_remove.grid(row = 0, column = 0)
         
     def go_save(self):
-        popup = tk.Tk()
-        popup.title("Saved")
-        frm_save = SaveMenu(popup)
-        frm_save.grid(row = 0, column = 0)
+        messagebox.showinfo(message = "File Saved.")
+        datafile = open("game_lib.pickle", "wb")
+        pk.dump(games, datafile)
+        datafile.close()
         
 class AddMenu(Screen):
     def __init__(self):
@@ -195,6 +195,7 @@ class AddMenu(Screen):
         entry.append(self.ent_purchase.get())
         entry.append(self.scr_notes.get(0.0, "end"))
         games[len(games)+1] = entry
+        messagebox.showinfo(message = "Game added!")
         Screen.current = 0
         Screen.switch_frame()
                    
@@ -385,6 +386,7 @@ class EditMenu(Screen):
         entry.append(self.ent_purchase.get())
         entry.append(self.scr_notes.get(0.0, "end"))
         games[self.edit_key] = entry
+        messagebox.showinfo(message = "Game edited!")
         Screen.current = 0
         Screen.switch_frame()
                    
