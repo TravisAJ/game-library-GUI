@@ -429,7 +429,7 @@ class SearchMenu(Screen):
         self.lbl_search_by = tk.Label(self, text = "Search by:", font = LABEL_FONT)
         self.lbl_search_by.grid(row = 2, column = 1, columnspan = 2, sticky = "nsw")
         
-        options = ["Genre", "Title", "Developer", "Publisher", "System",
+        options = ["** SEARCH BY **", "Genre", "Title", "Developer", "Publisher", "System",
                    "Release", "Rating", "Gamemode", "Price", "Progress", "Purchase"]
         tkvar = tk.StringVar(self)
         tkvar.set(options[0])
@@ -460,17 +460,88 @@ class SearchMenu(Screen):
         self.btn_search = tk.Button(self, text = "SEARCH", font = BUTTON_FONT, command = self.submit_search)
         self.btn_search.grid(row = 7, column = 5, columnspan = 2, sticky = "news")
         
+        for key in games.keys():
+            entry = games[key]
+            self.filter_print(entry)
+        self.scr_search.delete(0.0, 'end')
+        
     def cancel_search(self):
         Screen.current = 0
         Screen.switch_frame()
+        self.scr_search.delete(0.0, 'end')
+        self.frm_print_filters.genre_var.set(True)
+        self.frm_print_filters.title_var.set(True)
+        self.frm_print_filters.developer_var.set(True)
+        self.frm_print_filters.publisher_var.set(True)
+        self.frm_print_filters.system_var.set(True)
+        self.frm_print_filters.release_var.set(True)
+        self.frm_print_filters.rating_var.set(True)
+        self.frm_print_filters.gamemode_var.set(True)
+        self.frm_print_filters.price_var.set(True)
+        self.frm_print_filters.progress_var.set(True)
+        self.frm_print_filters.purchase_var.set(True)
+        self.frm_print_filters.notes_var.set(True)        
         
     def clear_search(self):
+        self.frm_print_filters.genre_var.set(False)
+        self.frm_print_filters.title_var.set(False)
+        self.frm_print_filters.developer_var.set(False)
+        self.frm_print_filters.publisher_var.set(False)
+        self.frm_print_filters.system_var.set(False)
+        self.frm_print_filters.release_var.set(False)
+        self.frm_print_filters.rating_var.set(False)
+        self.frm_print_filters.gamemode_var.set(False)
+        self.frm_print_filters.price_var.set(False)
+        self.frm_print_filters.progress_var.set(False)
+        self.frm_print_filters.purchase_var.set(False)
+        self.frm_print_filters.notes_var.set(False)
         self.ent_search_for.delete(0, 'end')
         
     def submit_search(self):
-        Screen.current = 0
-        Screen.switch_frame()
-        messagebox.showinfo(message = "Search Function WIP")       
+        self.scr_search.delete(0.0, 'end')
+        for key in games.keys():
+            entry = games[key]
+            self.filter_print(entry)
+        
+    def filter_print(self, entry):
+        if self.frm_print_filters.genre_var.get() == True:
+            msg = "Genre: " + entry[0] + "\n"
+            self.scr_search.insert("insert", msg)
+        if self.frm_print_filters.title_var.get() == True:
+            msg = "Title: " + entry[1] + "\n"
+            self.scr_search.insert("insert", msg)
+        if self.frm_print_filters.developer_var.get() == True:
+            msg = "Developer: " + entry[2] + "\n"
+            self.scr_search.insert("insert", msg)
+        if self.frm_print_filters.publisher_var.get() == True:
+            msg = "Publisher: " + entry[3] + "\n"
+            self.scr_search.insert("insert", msg)
+        if self.frm_print_filters.system_var.get() == True:
+            msg = "System: " + entry[4] + "\n"
+            self.scr_search.insert("insert", msg)
+        if self.frm_print_filters.release_var.get() == True:
+            msg = "Release Year: " + entry[5] + "\n"
+            self.scr_search.insert("insert", msg)
+        if self.frm_print_filters.rating_var.get() == True:
+            msg = "Personal Rating: " + entry[6] + "\n"
+            self.scr_search.insert("insert", msg)
+        if self.frm_print_filters.gamemode_var.get() == True:
+            msg = "Gamemode: " + entry[7] + "\n"
+            self.scr_search.insert("insert", msg)
+        if self.frm_print_filters.price_var.get() == True:
+            msg = "Price: " + entry[8] + "\n"
+            self.scr_search.insert("insert", msg)
+        if self.frm_print_filters.progress_var.get() == True:
+            msg = "Beat It?: " + entry[9] + "\n"
+            self.scr_search.insert("insert", msg)
+        if self.frm_print_filters.purchase_var.get() == True:
+            msg = "Purchase Date: " + entry[10] + "\n"
+            self.scr_search.insert("insert", msg)
+        if self.frm_print_filters.notes_var.get() == True:
+            msg = "Notes: " + entry[11] + "\n"
+            self.scr_search.insert("insert", msg)
+        msg = "-----------------------------------------------------------\n"
+        self.scr_search.insert("insert", msg)
         
 class PrintFilters(tk.Frame):
     def __init__(self, parent):
@@ -479,40 +550,52 @@ class PrintFilters(tk.Frame):
         self.grid_columnconfigure(2,weight=1)
         self.grid_columnconfigure(3,weight=1)
         
-        self.chk_genre = tk.Checkbutton(self, fg = "gray", text = "Genre")
+        self.genre_var = tk.BooleanVar(self, True)
+        self.chk_genre = tk.Checkbutton(self, fg = "gray", variable = self.genre_var, text = "Genre")
         self.chk_genre.grid(row = 1, column = 1, sticky = "nsw")
-        
-        self.chk_title = tk.Checkbutton(self, fg = "gray", text = "Title")
+
+        self.title_var = tk.BooleanVar(self, True) 
+        self.chk_title = tk.Checkbutton(self, fg = "gray", variable = self.title_var, text = "Title")
         self.chk_title.grid(row = 2, column = 1, sticky = "nsw")
-        
-        self.chk_developer = tk.Checkbutton(self, fg = "gray", text = "Developer")
+
+        self.developer_var = tk.BooleanVar(self, True)       
+        self.chk_developer = tk.Checkbutton(self, fg = "gray", variable = self.developer_var, text = "Developer")
         self.chk_developer.grid(row = 3, column = 1, sticky = "nsw")
-        
-        self.chk_publisher = tk.Checkbutton(self, fg = "gray", text = "Publisher")
+
+        self.publisher_var = tk.BooleanVar(self, True)     
+        self.chk_publisher = tk.Checkbutton(self, fg = "gray", variable = self.publisher_var, text = "Publisher")
         self.chk_publisher.grid(row = 4, column = 1, sticky = "nsw")
-        
-        self.chk_system = tk.Checkbutton(self, fg = "gray", text = "System")
+
+        self.system_var = tk.BooleanVar(self, True)        
+        self.chk_system = tk.Checkbutton(self, fg = "gray", variable = self.system_var, text = "System")
         self.chk_system.grid(row = 1, column = 2, sticky = "nsw")
-        
-        self.chk_release = tk.Checkbutton(self, fg = "gray", text = "Release")
+
+        self.release_var = tk.BooleanVar(self, True)        
+        self.chk_release = tk.Checkbutton(self, fg = "gray", variable = self.release_var, text = "Release")
         self.chk_release.grid(row = 2, column = 2, sticky = "nsw")
-        
-        self.chk_rating = tk.Checkbutton(self, fg = "gray", text = "Rating")
+
+        self.rating_var = tk.BooleanVar(self, True)        
+        self.chk_rating = tk.Checkbutton(self, fg = "gray", variable = self.rating_var, text = "Rating")
         self.chk_rating.grid(row = 3, column = 2, sticky = "nsw")
-        
-        self.chk_gamemode = tk.Checkbutton(self, fg = "gray", text = "Gamemode")
+
+        self.gamemode_var = tk.BooleanVar(self, True)        
+        self.chk_gamemode = tk.Checkbutton(self, fg = "gray", variable = self.gamemode_var, text = "Gamemode")
         self.chk_gamemode.grid(row = 4, column = 2, sticky = "nsw")
-        
-        self.chk_price = tk.Checkbutton(self, fg = "gray", text = "Price")
+
+        self.price_var = tk.BooleanVar(self, True)
+        self.chk_price = tk.Checkbutton(self, fg = "gray", variable = self.price_var, text = "Price")
         self.chk_price.grid(row = 1, column = 3, sticky = "nsw")
-        
-        self.chk_progress = tk.Checkbutton(self, fg = "gray", text = "Progress")
+
+        self.progress_var = tk.BooleanVar(self, True)     
+        self.chk_progress = tk.Checkbutton(self, fg = "gray", variable = self.progress_var, text = "Progress")
         self.chk_progress.grid(row = 2, column = 3, sticky = "nsw")
-        
-        self.chk_purchase = tk.Checkbutton(self, fg = "gray", text = "Purchase")
+
+        self.purchase_var = tk.BooleanVar(self, True)
+        self.chk_purchase = tk.Checkbutton(self, fg = "gray", variable = self.purchase_var, text = "Purchase")
         self.chk_purchase.grid(row = 3, column = 3, sticky = "nsw")
-        
-        self.chk_notes = tk.Checkbutton(self, fg = "gray", text = "Notes")
+
+        self.notes_var = tk.BooleanVar(self, True)
+        self.chk_notes = tk.Checkbutton(self, fg = "gray", variable = self.notes_var, text = "Notes")
         self.chk_notes.grid(row = 4, column = 3, sticky = "nsw")
         
 class RemoveMenu(tk.Frame):

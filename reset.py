@@ -32,9 +32,8 @@ class Reset_Frame(tk.Frame):
         datafile.close()
         messagebox.showinfo(message = "Data Reseted. Go Back to the Game Library.")
     
-if __name__ == "__main__":
-    root = tk.Tk()
-    root.title("Data Reset")
+root = tk.Tk()
+root.title("Data Reset")
     
 main = Reset_Frame()
 main.grid(row = 0, column = 0, sticky = "news")
