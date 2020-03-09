@@ -9,19 +9,22 @@ from tkinter import messagebox
 
 '''The Game Library Program'''
 
+#------------- CONSTANTS -------------
 TITLE_FONT = ("Times New Roman", 24)
 LABEL_FONT = ("Times New Roman", 18)
 ENTRY_FONT = ("Times New Roman", 15)
 BUTTON_FONT = ("Arial", 15)
 SCROLL_FONT = ("Arial", 12)
 
+#----- SCREEN CLASS -----
 class Screen(tk.Frame):
     current = 0
     def __init__(self):
         tk.Frame.__init__(self)
     def switch_frame():
         screens[Screen.current].tkraise()
-
+        
+#----- MAIN MENU CLASS -----
 class MainMenu(Screen):
     def __init__(self):
         Screen.__init__(self)
@@ -36,7 +39,7 @@ class MainMenu(Screen):
         self.btn_add.grid(row = 2, column = 2, sticky = "news")
         
         self.btn_edit = tk.Button(self, text = "EDIT", font = BUTTON_FONT, command = self.go_edit)
-        self.btn_edit.grid(row = 3, column = 2, sticky = "nwes")
+        self.btn_edit.grid(row = 3, column = 2, sticky = "news")
         
         self.btn_search = tk.Button(self, text = "SEARCH", font = BUTTON_FONT, command = self.go_search)
         self.btn_search.grid(row = 4, column = 2, sticky = "nwes")
@@ -65,19 +68,19 @@ class MainMenu(Screen):
     def go_remove(self):
         popup = tk.Tk()
         popup.title("Remove Menu")
-        frm_remove = RemoveMenu(popup)
-        frm_remove.grid(row = 0, column = 0)
+        frm_remove = RemovePopup(popup)
+        frm_remove.grid(row = 0, column = 0)      
         
     def go_save(self):
-        messagebox.showinfo(message = "File Saved.")
+        messagebox.showinfo("Saved", "File Saved.")
         datafile = open("game_lib.pickle", "wb")
         pk.dump(games, datafile)
         datafile.close()
-        
+
+#----- ADD MENU CLASS -----        
 class AddMenu(Screen):
     def __init__(self):
         Screen.__init__(self)
-        self.edit_key = 0
         
         self.grid_columnconfigure(1,weight=1)
         self.grid_columnconfigure(2,weight=1)
@@ -152,7 +155,7 @@ class AddMenu(Screen):
         self.dbx_gamemode = tk.OptionMenu(self, self.tkvar, * options)
         self.dbx_gamemode.grid(row = 4, column = 4, columnspan = 3, sticky = "news")
         
-        self.scr_notes = ScrolledText(self, width = 110, height = 5, font = SCROLL_FONT)
+        self.scr_notes = ScrolledText(self, width = 110, height = 7, font = SCROLL_FONT)
         self.scr_notes.grid(row = 5, column = 1, columnspan = 6)
         
         self.btn_cancel_add = tk.Button(self, text = "CANCEL", font = BUTTON_FONT, command = self.cancel_add)
@@ -181,23 +184,26 @@ class AddMenu(Screen):
         self.scr_notes.delete(0.0, 'end')
         
     def submit_add(self):
-        entry = []
-        entry.append(self.ent_genre.get())
-        entry.append(self.ent_title.get())
-        entry.append(self.ent_developer.get())
-        entry.append(self.ent_publisher.get())
-        entry.append(self.ent_system.get())
-        entry.append(self.ent_release.get())
-        entry.append(self.ent_rating.get())
-        entry.append(self.tkvar.get())
-        entry.append(self.ent_price.get())
-        entry.append("")
-        entry.append(self.ent_purchase.get())
-        entry.append(self.scr_notes.get(0.0, "end"))
-        games[len(games)+1] = entry
-        messagebox.showinfo(message = "Game added!")
-        Screen.current = 0
-        Screen.switch_frame()
+        if self.ent_title.get() == "":
+            messagebox.showerror("¡ERROR!", "Please Insert Title")
+        else:
+            entry = []
+            entry.append(self.ent_genre.get())
+            entry.append(self.ent_title.get())
+            entry.append(self.ent_developer.get())
+            entry.append(self.ent_publisher.get())
+            entry.append(self.ent_system.get())
+            entry.append(self.ent_release.get())
+            entry.append(self.ent_rating.get())
+            entry.append(self.tkvar.get())
+            entry.append(self.ent_price.get())
+            entry.append("")
+            entry.append(self.ent_purchase.get())
+            entry.append(self.scr_notes.get(0.0, "end"))
+            games[len(games)+1] = entry
+            messagebox.showinfo("Success", "Game Added!")
+            Screen.current = 0
+            Screen.switch_frame()
                    
     def update(self):
         entry = games[self.edit_key]
@@ -220,8 +226,9 @@ class AddMenu(Screen):
         self.ent_purchase.delete(0, "end")
         self.ent_purchase.insert(0, entry[10])
         self.scr_notes.delete(0.0, "end")
-        self.scr_notes.insert(0.0, entry[11])        
+        self.scr_notes.insert(0.0, entry[11])
         
+#----- EDIT SELECT CLASS -----
 class EditPopup(tk.Frame):
     def __init__(self, parent):
         tk.Frame.__init__(self, master = parent)
@@ -254,7 +261,11 @@ class EditPopup(tk.Frame):
         
     def submit_edit(self):
         if self.tkvar.get() == self.options[0]:
-            pass
+            popup = tk.Tk()
+            popup.title("!ERROR!")
+            msg = "Error: Select a Title!"
+            frm_error = PopMessage(popup, msg)
+            frm_error.grid(row = 1, column = 1) 
         else:
             for i in range(len(self.options)):
                 if self.tkvar.get() == self.options[i]:
@@ -265,6 +276,7 @@ class EditPopup(tk.Frame):
             Screen.switch_frame()        
             self.parent.destroy()
 
+#----- EDIT MENU CLASS -----
 class EditMenu(Screen):
     def __init__(self):
         Screen.__init__(self)
@@ -343,7 +355,7 @@ class EditMenu(Screen):
         self.dbx_gamemode = tk.OptionMenu(self, self.tkvar, * options)
         self.dbx_gamemode.grid(row = 4, column = 4, columnspan = 3, sticky = "news")
         
-        self.scr_notes = ScrolledText(self, width = 110, height = 5, font = SCROLL_FONT)
+        self.scr_notes = ScrolledText(self, width = 110, height = 7, font = SCROLL_FONT)
         self.scr_notes.grid(row = 5, column = 1, columnspan = 6)
         
         self.btn_cancel_add = tk.Button(self, text = "CANCEL", font = BUTTON_FONT, command = self.cancel_edit)
@@ -372,23 +384,26 @@ class EditMenu(Screen):
         self.scr_notes.delete(0.0, 'end')
         
     def submit_edit(self):
-        entry = []
-        entry.append(self.ent_genre.get())
-        entry.append(self.ent_title.get())
-        entry.append(self.ent_developer.get())
-        entry.append(self.ent_publisher.get())
-        entry.append(self.ent_system.get())
-        entry.append(self.ent_release.get())
-        entry.append(self.ent_rating.get())
-        entry.append(self.tkvar.get())
-        entry.append(self.ent_price.get())
-        entry.append("")
-        entry.append(self.ent_purchase.get())
-        entry.append(self.scr_notes.get(0.0, "end"))
-        games[self.edit_key] = entry
-        messagebox.showinfo(message = "Game edited!")
-        Screen.current = 0
-        Screen.switch_frame()
+        if self.ent_title.get() == "":
+            messagebox.showerror("¡ERROR!", "Title Can't Be Empty!")
+        else:
+            entry = []
+            entry.append(self.ent_genre.get())
+            entry.append(self.ent_title.get())
+            entry.append(self.ent_developer.get())
+            entry.append(self.ent_publisher.get())
+            entry.append(self.ent_system.get())
+            entry.append(self.ent_release.get())
+            entry.append(self.ent_rating.get())
+            entry.append(self.tkvar.get())
+            entry.append(self.ent_price.get())
+            entry.append("")
+            entry.append(self.ent_purchase.get())
+            entry.append(self.scr_notes.get(0.0, "end"))
+            games[self.edit_key] = entry
+            messagebox.showinfo("Success", "Game Edited!")
+            Screen.current = 0
+            Screen.switch_frame()
                    
     def update(self):
         entry = games[self.edit_key]
@@ -413,6 +428,7 @@ class EditMenu(Screen):
         self.scr_notes.delete(0.0, "end")
         self.scr_notes.insert(0.0, entry[11])
 
+#----- SEARCH MENU CLASS -----
 class SearchMenu(Screen):
     def __init__(self):
         Screen.__init__(self)
@@ -429,11 +445,11 @@ class SearchMenu(Screen):
         self.lbl_search_by = tk.Label(self, text = "Search by:", font = LABEL_FONT)
         self.lbl_search_by.grid(row = 2, column = 1, columnspan = 2, sticky = "nsw")
         
-        options = ["** SEARCH BY **", "Genre", "Title", "Developer", "Publisher", "System",
-                   "Release", "Rating", "Gamemode", "Price", "Progress", "Purchase"]
-        tkvar = tk.StringVar(self)
-        tkvar.set(options[0])
-        self.dbx_search_by = tk.OptionMenu(self, tkvar, * options)
+        self.options = ["None", "Genre", "Title", "Developer", "Publisher", "System",
+                   "Release Date", "Rating", "Gamemode", "Price", "Progress", "Purchase Date"]
+        self.tkvar = tk.StringVar(self)
+        self.tkvar.set(self.options[0])
+        self.dbx_search_by = tk.OptionMenu(self, self.tkvar, * self.options)
         self.dbx_search_by.grid(row = 3, column = 1, columnspan = 2, sticky = "news")
         
         self.lbl_search_for = tk.Label(self, text = "Search for:", font = LABEL_FONT)
@@ -483,25 +499,11 @@ class SearchMenu(Screen):
         self.frm_print_filters.notes_var.set(True)        
         
     def clear_search(self):
-        self.frm_print_filters.genre_var.set(False)
-        self.frm_print_filters.title_var.set(False)
-        self.frm_print_filters.developer_var.set(False)
-        self.frm_print_filters.publisher_var.set(False)
-        self.frm_print_filters.system_var.set(False)
-        self.frm_print_filters.release_var.set(False)
-        self.frm_print_filters.rating_var.set(False)
-        self.frm_print_filters.gamemode_var.set(False)
-        self.frm_print_filters.price_var.set(False)
-        self.frm_print_filters.progress_var.set(False)
-        self.frm_print_filters.purchase_var.set(False)
-        self.frm_print_filters.notes_var.set(False)
         self.ent_search_for.delete(0, 'end')
         
     def submit_search(self):
         self.scr_search.delete(0.0, 'end')
-        for key in games.keys():
-            entry = games[key]
-            self.filter_print(entry)
+        self.print_search()
         
     def filter_print(self, entry):
         if self.frm_print_filters.genre_var.get() == True:
@@ -542,7 +544,77 @@ class SearchMenu(Screen):
             self.scr_search.insert("insert", msg)
         msg = "-----------------------------------------------------------\n"
         self.scr_search.insert("insert", msg)
+    
+    def print_search(self):
+        keyword = self.ent_search_for.get()
+        found = False
+        self.scr_search.delete(0.0, "end")
+        for key in games.keys( ):
+            entry = games[key]
+            if self.tkvar.get() == self.options[0]:
+                self.filter_print(entry)
+                found = True
+                
+            if self.tkvar.get() == self.options[1]:
+                if keyword in entry[0]:
+                    self.filter_print(entry)
+                    found = True
+                    
+            if self.tkvar.get() == self.options[2]:
+                if keyword in entry[1]:
+                    self.filter_print(entry)
+                    found = True
+                    
+            if self.tkvar.get() == self.options[3]:
+                if keyword in entry[2]:
+                    self.filter_print(entry)
+                    found = True
+                    
+            if self.tkvar.get() == self.options[4]:
+                if keyword in entry[3]:
+                    self.filter_print(entry)
+                    found = True
+                    
+            if self.tkvar.get() == self.options[5]:
+                if keyword in entry[4]:
+                    self.filter_print(entry)
+                    found = True
+                            
+            if self.tkvar.get() == self.options[6]:
+                if keyword in entry[5]:
+                    self.filter_print(entry)
+                    found = True
+                            
+            if self.tkvar.get() == self.options[7]:
+                if keyword in entry[6]:
+                    self.filter_print(entry)
+                    found = True
+                            
+            if self.tkvar.get() == self.options[8]:
+                if keyword in entry[7]:
+                    self.filter_print(entry)
+                    found = True
+                    
+            if self.tkvar.get() == self.options[9]:
+                if keyword in entry[8]:
+                    self.filter_print(entry)
+                    found = True
+                                    
+            if self.tkvar.get() == self.options[10]:
+                if keyword in entry[9]:
+                    self.filter_print(entry)
+                    found = True
+                                    
+            if self.tkvar.get() == self.options[11]:
+                if keyword in entry[10]:
+                    self.filter_print(entry)
+                    found = True
+                    
+            if not found:
+                messagebox.showwarning("Not Found", "No Results Found!")
+                break
         
+#----- SEARCH CHECKBOX CLASS -----
 class PrintFilters(tk.Frame):
     def __init__(self, parent):
         tk.Frame.__init__(self, master = parent)
@@ -597,8 +669,9 @@ class PrintFilters(tk.Frame):
         self.notes_var = tk.BooleanVar(self, True)
         self.chk_notes = tk.Checkbutton(self, fg = "gray", variable = self.notes_var, text = "Notes")
         self.chk_notes.grid(row = 4, column = 3, sticky = "nsw")
-        
-class RemoveMenu(tk.Frame):
+
+#----- REMOVE MENU CLASS -----
+class RemovePopup(tk.Frame):
     def __init__(self, parent):
         tk.Frame.__init__(self, master = parent)
         self.parent = parent
@@ -610,12 +683,12 @@ class RemoveMenu(tk.Frame):
         self.lbl_edit = tk.Label(self, text = "Which title would you like to remove?", font = TITLE_FONT)
         self.lbl_edit.grid(row = 1, column = 1, columnspan = 4, sticky = "news")
         
-        options = []
+        self.options = ["** SELECT A TITLE **"]
         for key in games:
-            options.append(games[key][1])
-        tkvar = tk.StringVar(self)
-        tkvar.set(options[0])
-        self.dbx_edit = tk.OptionMenu(self, tkvar, * options)
+            self.options.append(games[key][1])
+        self.tkvar = tk.StringVar(self)
+        self.tkvar.set(self.options[0])
+        self.dbx_edit = tk.OptionMenu(self, self.tkvar, * self.options)
         self.dbx_edit.grid(row = 3, column = 1, columnspan = 4, sticky = "news")
         
         self.btn_cancel_remove = tk.Button(self, text = "CANCEL", font = BUTTON_FONT, command = self.cancel_remove)
@@ -628,30 +701,101 @@ class RemoveMenu(tk.Frame):
         self.parent.destroy()
         
     def submit_remove(self):
-        self.parent.destroy()
-        messagebox.showinfo(message = "Remove Function WIP") 
+        if self.tkvar.get() == self.options[0]:
+            popup = tk.Tk()
+            popup.title("¡ERROR!")
+            msg = "Error: Select a Title!"
+            frm_error = PopMessage(popup, msg)
+            frm_error.grid(row = 1, column = 1) 
+        else:
+            for i in range(len(self.options)):
+                if self.tkvar.get() == self.options[i]:
+                    screens[4].remove_key = i
+                    break
+            Screen.current = 4
+            screens[Screen.current].update()
+            Screen.switch_frame()        
+            self.parent.destroy()
         
-class SaveMenu(tk.Frame):
-    def __init__(self, parent):
-        tk.Frame.__init__(self, master = parent)
-        self.parent = parent
+class RemoveMenu(Screen):
+    def __init__(self):
+        Screen.__init__(self)
+        self.remove_key = 0
+        
         self.grid_columnconfigure(1,weight=1)
         self.grid_columnconfigure(2,weight=1)
         self.grid_columnconfigure(3,weight=1)
+        self.grid_columnconfigure(4,weight=1)
         
-        self.lbl_save = tk.Label(self, text = "File saved.", font = TITLE_FONT)
-        self.lbl_save.grid(row = 1, column = 1, columnspan = 3)
+        self.lbl_remove_1 = tk.Label(self, text = "Are you sure you want to delete this", font = TITLE_FONT)
+        self.lbl_remove_1.grid(row = 1, column = 1, columnspan = 4, sticky = "news")
         
-        self.btn_save = tk.Button(self, text = "OK", font = BUTTON_FONT, command = self.ok_save)
-        self.btn_save.grid(row = 2, column = 1, columnspan = 3)
+        self.lbl_remove_2 = tk.Label(self, text = "game with the following information?", font = TITLE_FONT)
+        self.lbl_remove_2.grid(row = 2, column = 1, columnspan = 4, sticky = "news")
         
-    def ok_save(self):
-        self.parent.destroy()
-        datafile = open("game_lib.pickle", "wb")
-        pk.dump(games, datafile)
-        datafile.close()        
+        self.scr_remove = ScrolledText(self, width = 110, height = 9.5, font = SCROLL_FONT)
+        self.scr_remove.grid(row = 3, column = 1, columnspan = 4, sticky = "news") 
         
+        self.btn_no = tk.Button(self, text = "NO", font = BUTTON_FONT, command = self.remove_no)
+        self.btn_no.grid(row = 4, column = 1, columnspan = 2, sticky = "news")
+        
+        self.btn_yes = tk.Button(self, text = "YES", font = BUTTON_FONT, command = self.remove_yes)
+        self.btn_yes.grid(row = 4, column = 3, columnspan = 2, sticky = "news")
+        
+    def remove_no(self):
+        Screen.current = 0
+        Screen.switch_frame()
+        
+    def remove_yes(self):
+        for key in range(1, len(games) + 1):
+            if key >= self.remove_key and key != len(games):
+                games[key] = games[key + 1]
+            if key == len(games):
+                games.pop(key)
+                messagebox.showinfo("Success", "Game removed!")
+                Screen.current = 0
+                Screen.switch_frame()        
+    
+    def update(self):
+        entry = games[self.remove_key]
+        msg = "Genre: " + entry[0] + "\n"
+        self.scr_remove.insert("insert", msg)
+        msg = "Title: " + entry[1] + "\n"
+        self.scr_remove.insert("insert", msg)
+        msg = "Developer: " + entry[2] + "\n"
+        self.scr_remove.insert("insert", msg)
+        msg = "Publisher: " + entry[3] + "\n"
+        self.scr_remove.insert("insert", msg)
+        msg = "System: " + entry[4] + "\n"
+        self.scr_remove.insert("insert", msg)
+        msg = "Release Date: " + entry[5] + "\n"
+        self.scr_remove.insert("insert", msg)
+        msg = "Rating: " + entry[6] + "\n"
+        self.scr_remove.insert("insert", msg)
+        msg = "Gamemode: " + entry[7] + "\n"
+        self.scr_remove.insert("insert", msg)
+        msg = "Price: " + entry[8] + "\n"
+        self.scr_remove.insert("insert", msg)
+        msg = "Beat it?: " + entry[9] + "\n"
+        self.scr_remove.insert("insert", msg)
+        msg = "Purchase Date: " + entry[10] + "\n"
+        self.scr_remove.insert("insert", msg)
+        msg = "Notes: " + entry[11] + "\n"
+        self.scr_remove.insert("insert", msg)        
 
+#----- POPUP MESSAGE CLASS -----
+class PopMessage(tk.Frame):
+    def __init__ (self, parent, msg = "generic"):
+        tk.Frame.__init__(self, master = parent)
+        self.parent = parent
+        
+        self.lbl_continue = tk.Label(self, text = msg, font = LABEL_FONT)
+        self.lbl_continue.grid()
+        
+        self.btn_ok = tk.Button(self, text = "OK", command = self.parent.destroy, font = BUTTON_FONT)
+        self.btn_ok.grid()
+        
+#---------- MAIN ----------
 if __name__ == "__main__":
     games = {}
     datafile = open("game_lib.pickle", "rb")
@@ -660,15 +804,16 @@ if __name__ == "__main__":
     root = tk.Tk()
     root.title("The Game Library")
     
-    screens = [MainMenu(), AddMenu(), EditMenu(), SearchMenu()]
+    screens = [MainMenu(), AddMenu(), EditMenu(), SearchMenu(), RemoveMenu()]
     
-    screens[0].grid(row = 0, column = 0, sticky = "news")
-    screens[1].grid(row = 0, column = 0, sticky = "news")
-    screens[2].grid(row = 0, column = 0, sticky = "news")
-    screens[3].grid(row = 0, column = 0, sticky = "news")
+    screens[0].grid(row = 1, column = 1, sticky = "news")
+    screens[1].grid(row = 1, column = 1, sticky = "news")
+    screens[2].grid(row = 1, column = 1, sticky = "news")
+    screens[3].grid(row = 1, column = 1, sticky = "news")
+    screens[4].grid(row = 1, column = 1, sticky = "news")
 
-    root.grid_columnconfigure(0, weight = 1)
-    root.grid_rowconfigure(0, weight = 1)
+    root.grid_columnconfigure(1, weight = 1)
+    root.grid_rowconfigure(1, weight = 1)
 
 main = screens[0]
 main.tkraise()
